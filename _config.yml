@@ -72,4 +72,4 @@ deploy:
 
 backup:
     type: git
-    repository: git@github.com:keenmisty/hexo.git
+    repository: git@github.com:keenmisty/hexo.git,master
