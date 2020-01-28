@@ -1,11 +1,16 @@
 ---
-#Welcome! This is Dr.MingChang's blog.
+layout: page
+title: 关于
+body: [article, grid, comments]
+valine:
+  placeholder: 有什么想对我说的？
+sidebar: false
 date: 2016-01-26 15:57:32
 ---
 # About Me
 
 暨南大学环境与气候研究院 讲师
-Assistant Researcher in Institute for Environment and Climate Research of Jinan University
+Lecturer in Institute for Environment and Climate Research of Jinan University
 
 ---
 ## Personal:
@@ -18,14 +23,14 @@ Assistant Researcher in Institute for Environment and Climate Research of Jinan 
 ---
 ## Education:
 
-|               |                   |                          |                        |                  |
-| ------------- |:------------------|--------------------------|------------------------|-----------------:|
-| 2012-2016:	| Ph.D.             | Environmental Sciences - | Sun Yat-sen University,|Guangdong, China  |
-| 2009-2012:	| M.S.              | Environmental Sciences - | Yantai University,     |Shandong, China   |
-| 2005-2009: 	| B.S.		    | Environmental Sciences - | Yantai University,     |Shandong, China   |
+|           |       |                        |                       |
+| ----------|:------|------------------------|-----------------------|
+| 2012-2016:| Ph.D. | Environmental Sciences | Sun Yat-sen University|
+| 2009-2012:| M.S.  | Environmental Sciences | Yantai University     |
+| 2005-2009:| B.S.  | Environmental Sciences | Yantai University     |
 
 ---
-## Interest in:
+## Focus on:
 
 * Land Surface Process
 * Air Pollutant Deposition Modeling

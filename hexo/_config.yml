@@ -8,6 +8,8 @@ subtitle:  苟利国家生死以，岂因祸福避趋之
 description: 没有什么是一顿烧烤不能解决的，如果有那就两顿烧烤解决。
 keywords: 常鸣
 author: 偿酩
+favicon: https://raw.githubusercontent.com/keenmisty/keenmisty.github.io/master/img/favicon.ico
+acatar: https://raw.githubusercontent.com/keenmisty/keenmisty.github.io/master/img/avatar.jpg
 language: zh-CN
 timezone:
 
@@ -73,8 +75,16 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: meterial
+#theme: material
+#theme: landscape
+theme: material-x
+#theme: next
 
+leancloud:
+        app_id: a7NRw9kvK3AniK1WDKrNmvDX-gzGzoHsz
+        app_key: fKuoOfXTQg71E8SqHDy8jelP
+
+use_cdn: true
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
