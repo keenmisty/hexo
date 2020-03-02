@@ -33,31 +33,14 @@ Lecturer in Institute for Environment and Climate Research of Jinan University
 ## Focus on:
 
 * Land Surface Process
-* Air Pollutant Deposition Modeling
+* Air Pollutant Deposition Modelling
 * Geographic Information System Application
-* Urbanization
-* Environmental Chemistry
+* Urbanization Effects
 
 ---
-## Skills:
+## Curriculum Vitae
 
-> WRF-Chem: `run`,`modify`,`analysis`
-
-> EMEP: `run`,`test`,`modify`
-
-> ArcGIS: `mapping`,`spatial analysis`,`write arcpy scripts`
-
-> Fortran: `read`,`modify`,`write subroutines`
-
-> Shell: `write bash/csh scripts`
-
-> NCL: `write automatic forecast scripts`
-
-> MATLAB: `analysis data`,`draw figures`
-
-> Python: `use to do languages adhesion` 
-
-> Other Programs: `GDAL`, `ENVI`, `AutoCAD`, `LabView`, `LaTeX`, `R`, etc. 
+[MyCV](./cv.pdf)
 
 ---
 ## Other Things:
