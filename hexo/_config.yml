@@ -77,8 +77,8 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 #theme: material
 #theme: landscape
-theme: material-x
-#theme: next
+#theme: material-x
+theme: next
 
 leancloud:
         app_id: a7NRw9kvK3AniK1WDKrNmvDX-gzGzoHsz
