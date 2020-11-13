@@ -258,6 +258,119 @@
             
               
                 
+                <a class="post-title-link" href="/2020/11/09/20201109sftp/" itemprop="url">
+                  sftp与lftp传输文件技巧
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Veröffentlicht am</span>
+            <time itemprop="dateCreated" datetime="2020-11-09T15:27:25+08:00" content="2020-11-09">
+              2020-11-09
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2020/11/09/20201109sftp/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2020/11/09/20201109sftp/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>题记：<br>最近被网络折腾的毫无脾气，不是这里安全问题就是那里权限问题，想要传输个文件真是难得要死。<br>历经千辛万苦，终于搭成功了定时sftp传输文件的操作，这技巧一定得记下来，以后估计会很常用：</p>
+<hr>
+<p>背景：<br>学校超算由于安全需要不支持ftp传输文件，而合作方的服务器不支持rsync和scp等操作，于是综合考虑，选择使用sftp进行文件的传输。<br>sftp与ftp语法基本一致，好处是使用了sshd守护进程，坏处是传输效率比较低，还好在我的应用中只是传输小文件，所以sftp恰巧适合。<br>同时，由于最终的要求是每天将我们自己定时运行的空气质量预报的结果图片传递给合作方服务器，因此选择在crontab中加了个shell脚本使用lftp驱动sftp进行文件的上传。</p>
+<hr>
+<p>批量文件夹上传脚本如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># write by changming</span></span><br><span class="line"><span class="comment"># 2020-11-09</span></span><br><span class="line"></span><br><span class="line">USER=username <span class="comment"># 远程sftp服务器端用户名</span></span><br><span class="line">PASSWORD=password <span class="comment"># 远程sftp服务器端密码</span></span><br><span class="line">SCRDIR=/localpath/localpath <span class="comment"># 本地服务器拟上传路径</span></span><br><span class="line">DESDIR=/dongguan/output <span class="comment"># 远程sftp服务器拟存储路径</span></span><br><span class="line">IP=XX.XX.XX.XX <span class="comment"># 远程sftp服务器IP</span></span><br><span class="line">PORT=XXXXX <span class="comment"># 远程端口</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;SCRDIR&#125;</span></span><br><span class="line">FILES=`ls`</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> FILE <span class="keyword">in</span> <span class="variable">$&#123;FILES&#125;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$&#123;FILE&#125;</span></span><br><span class="line">lftp -u <span class="variable">$&#123;USER&#125;</span>,<span class="variable">$&#123;PASSWORD&#125;</span> sftp://<span class="variable">$&#123;IP&#125;</span>:<span class="variable">$&#123;PORT&#125;</span> &lt;&lt;EOF</span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;DESDIR&#125;</span></span><br><span class="line">lcd <span class="variable">$&#123;SCRDIR&#125;</span></span><br><span class="line">mirror -R <span class="variable">$&#123;FILE&#125;</span> <span class="variable">$&#123;FILE&#125;</span></span><br><span class="line"><span class="built_in">bye</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"commit to sftp successfully"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+<hr>
+<p>代码详解:</p>
+<ol>
+<li>使用lftp驱动sftp的原因是因为sftp无法以eof的形式传递参数；</li>
+<li>sftp直接操作的格式是’sftp -P 端口 用户名@ip’，使用lftp时则是’lftp -u 用户名,密码 s<a href="ftp://ip:端口&#39;；" target="_blank" rel="noopener">ftp://ip:端口&#39;；</a></li>
+<li>传递文件夹的话需要在sftp中使用mirror命令，如果只是上传文件可以使用put命令</li>
+</ol>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2020/06/05/20200605hjrsb/" itemprop="url">
                   芒种喜雨
                 </a>
@@ -314,7 +427,7 @@
 <hr>
 <p>今天开心的事情很多，花最多精力带的学生，发表了一篇环境科学学报文章。</p>
 <p>今年很欣慰，我所带的两个毕业级学生，一个要读博，一个已经手握offer。作为一个相当新的专业硕士导师，我所寻求和希望培养的学生是期望录取能够传递环保火种、可以在毕业后为国家环保事业做出自己贡献的人才的。想来两位小伙子在我的蹂躏下出去社会是能够做到这一点的，总算是为国家培养出了合格的人才。</p>
-<p>可惜他们目前仍旧没达到超越我的水准，我始终觉得，研究生特别是专业硕士这一层次的培养应当是培养业界的业务骨干，对于其中勤奋努力的学生是值得托付一技之长，更多的作为业界精英培养。</p>
+<p>可惜他们目前仍旧没达到超越我的水准，虽然这样的要求很难，但是必须要以此作为追求。我始终觉得，研究生特别是专业硕士这一层次的培养应当是培养业界的业务骨干，对于其中勤奋努力的学生是值得托付一技之长，更多的作为业界精英去培养。</p>
 <p>如果我们所培育出的学术继承人在业务上超越不了自己的老师，如果不能引导出学生擅于快速合作的手段，如果不能通过研究生的培养指导出学生形成实际解决业界问题的能力，那么我们是无从培养学术种子、技术骨干、业界精英，推动大气环境科学的先进理念和技术去落地应用的。</p>
 <p>期待今年团队新入学的学生，分给我所带的学生能够想清楚自己未来想要做什么、喜欢做什么、擅长做什么，尽快学会深入追寻自己的兴趣、加强自己的技能、发现和弥补自己思维的不足、在参与科研课题和应用课题中发展自己探索未知和学以致用的能力。</p>
 <p>很高兴今年有一个小姑娘很不错，面对陌生的领域勇于尝试，面对布置的读书报告认真踏实，这样就已经很好了。</p>
@@ -694,132 +807,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/06/20180706pythondocx-md/" itemprop="url">
-                  基于python-docx生成半自动化的word报告
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">Veröffentlicht am</span>
-            <time itemprop="dateCreated" datetime="2018-07-06T15:49:47+08:00" content="2018-07-06">
-              2018-07-06
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2018/07/06/20180706pythondocx-md/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/07/06/20180706pythondocx-md/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>缘起：<br>一直以来都有个需求是将固定格式的文档自动化生成，我以前曾经拿<code>latex</code>尝试过，效果其实很好，在<code>linux</code>下直接就可以生成pdf文档，非常适宜于放在服务器上。<br>然而，可悲的现实在于，<code>latex</code>过于阳春白雪。要说服更多的人走出自己的舒服区掌握一项新技能，实在是一件比触动灵魂更难的事情。<br>好在<code>word</code>还算是很多人都会的一个软件，而<code>python</code>也受到越来越多的人的青睐，我也希望走出自己的舒服区来尽量多的尝试它、学会它。</p>
-<hr>
-<h2 id="快速入门："><a href="#快速入门：" class="headerlink" title="快速入门："></a>快速入门：</h2><p>讲真，最快的入门方式就是看它的官方文档，即：<code>https://python-docx.readthedocs.io/en/latest/</code><br>不过我想，还是有一些值得记录下来的点作为笔记留作后用：</p>
-<ul>
-<li><p>安装<br>python-docx的安装很简单，pip install即可。如果有anaconda的话，可以conda安装。</p>
-</li>
-<li><p>避免版本问题<br>由于python有2和3的问题，所以调用module时需要针对性的进行一些修改。</p>
-</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># for python 2.7</span></span><br><span class="line">reload(sys)</span><br><span class="line">sys.setdefaultencoding(<span class="string">'utf-8'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># for python &lt;=3.3</span></span><br><span class="line"><span class="keyword">import</span> imp</span><br><span class="line">imp.reload(sys)</span><br><span class="line">        </span><br><span class="line"><span class="comment"># for python &gt;=3.4</span></span><br><span class="line"><span class="keyword">import</span> importlib</span><br><span class="line">importlib.reload(sys)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置字体<br>python-docx使用styles.font来指定字体的设置。方式如下：</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">document.styles[<span class="string">'Normal'</span>].font.name = <span class="string">u'仿宋'</span></span><br><span class="line">document.styles[<span class="string">'Normal'</span>]._element.rPr.rFonts.set(qn(<span class="string">'w:eastAsia'</span>), <span class="string">u'仿宋'</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>添加分页符</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.add_page_break()</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>表格</p>
-</li>
-<li><p>与其他数据的衔接</p>
-</li>
-<li><p>后期调整</p>
-</li>
-</ul>
-<p>待续。。。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -865,7 +852,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">19</span>
+              <span class="site-state-item-count">20</span>
               <span class="site-state-item-name">Artikel</span>
             </a>
           </div>
